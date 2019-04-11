@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const hash = require("bcryptjs").hash;
 const compare = require("bcryptjs").compare;
 
+// feel free to add new fields and config the user mode as wanted. Just the email and password have to stay like this.
+
 const userSchema = new Schema({
   email: String,
   password: String
@@ -21,10 +23,5 @@ userSchema.statics.doesntExist = async function(options) {
 userSchema.methods.matchesPassword = function(password) {
   return compare(password, this.password);
 };
-
-const User = mongoose.model("User", userSchema);
-
-const testUser = new User({ email: "test@gmail.com", password: "hello" });
-testUser.save();
 
 module.exports = User;
