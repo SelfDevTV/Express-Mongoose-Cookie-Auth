@@ -1,23 +1,27 @@
 var express = require("express");
 var router = express.Router();
-var User = require("../models/user");
+const userController = require("../controller/userController");
 
 /* GET users listing. */
 router.get("/", function(req, res, next) {
   res.send("respond with a resource");
 });
 
-router.post("/signup", req, res => {
-  User.create({
-    username: req.body.username,
-    email: req.body.email,
-    password: req.body.password
-  })
-    .then(user => {
-      req.session.user = user.dataValues;
-      res.statusCode(200);
-    })
-    .catch(error => res.send(error));
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  // authenticate the user
+  const user = await userController.attemptSignIn(email, password);
+
+  // if no errors we have a user and we stick it's id into the cookie
+  req.session.userId = user.id;
+  res.send("auth ok");
+});
+
+router.get("/me", (req, res) => {
+  // get the current userId if any
+
+  res.send(req.session.userId);
 });
 
 module.exports = router;
